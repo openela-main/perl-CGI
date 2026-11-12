@@ -1,11 +1,22 @@
 Name:           perl-CGI
 Summary:        Handle Common Gateway Interface requests and responses
 Version:        4.38
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        (GPL+ or Artistic) and Artistic 2.0
 Group:          Development/Libraries
 Source0:        http://search.cpan.org/CPAN/authors/id/L/LE/LEEJO/CGI-%{version}.tar.gz
 URL:            http://search.cpan.org/dist/CGI
+# CVE-2026-120650
+# https://github.com/leejo/CGI.pm/commit/17b838dc14d2b82ae6c7e76f66ec2c3f3b08038b
+# https://github.com/leejo/CGI.pm/commit/f3febefe63fe3881d8c3ae10fa83ca8ec950b959
+# https://github.com/leejo/CGI.pm/commit/277baeb74fde7bce975a7bd0a1f98dcf1b9b2050
+# https://github.com/leejo/CGI.pm/commit/8a78305065690461ae283fa24e5ebe4ec8a22fbc
+# https://github.com/leejo/CGI.pm/commit/8940a74e53a41563f72813b45f99cceaaa4c92e8
+Patch0:         perl-CGI-4.38-CVE-2026-120650.patch
+# https://github.com/leejo/CGI.pm/commit/5379eb18e87b7f985613f5c4f7bae94478a4fa2f
+Patch1:         perl-CGI-4.38-CVE-2026-120641.patch
+# https://github.com/leejo/CGI.pm/commit/6ae50ce84073b8f68a6e3750479de70d5b8f2dcf
+Patch2:         perl-CGI-4.38-CVE-2026-120642.patch
 BuildArch:      noarch
 BuildRequires:  coreutils
 BuildRequires:  findutils
@@ -81,6 +92,9 @@ with built-in support for mod_perl and mod_perl2 as well as FastCGI.
 
 %prep
 %setup -q -n CGI-%{version}
+%patch -P 0 -p1
+%patch -P 1 -p1
+%patch -P 2 -p1
 iconv -f iso8859-1 -t utf-8 < Changes > Changes.1
 mv Changes.1 Changes
 chmod -c -x examples/*
@@ -104,6 +118,11 @@ make test
 %{_mandir}/man3/*.3*
 
 %changelog
+* Wed Nov 04 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 4.38-3
+- CVE-2026-120650 perl-CGI: perl-cgi: Denial of Service via unenforced request and upload limits
+- CVE-2026-120641 perl-CGI: perl-cgi: arbitrary file write via unsanitized upload filenames
+- CVE-2026-120642 perl-CGI: perl-cgi: Security feature bypass via untainted request parameters
+
 * Thu Feb 08 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.38-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
